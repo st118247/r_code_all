@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- template.html -->
+<html>
+  <head>
+    {{ headContent() }}
+  </head>
+  <body>
+    <div>
+      {{ button }}
+      {{ slider }}
+    </div>
+  </body>
+</html><!DOCTYPE html>
+<html>
+  <head>  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>  
+    <script type="application/shiny-singletons"></script>  
+    <script type="application/html-dependencies">
+            json2[2014.02.04];
+            jquery[1.11.3];
+            shiny[0.13];
+            ionrangeslider[2.0.12];
+            strftime[0.9.2]
+    </script>
+    <script src="shared/json2-min.js"></script>
+    <script src="shared/jquery.min.js"></script>
+    <link href="shared/shiny.css" rel="stylesheet"/>
+    <script src="shared/shiny.min.js"></script>
+    <link href="shared/ionrangeslider/css/ion.rangeSlider.css" 
+          rel="stylesheet"/>
+    <link href="shared/ionrangeslider/css/ion.rangeSlider.skinShiny.css" 
+          rel="stylesheet"/>
+    <script src="shared/ionrangeslider/js/ion.rangeSlider.min.js"></script>
+    <script src="shared/strftime/strftime-min.js"></script>
+  </head>
+  <body>
+    <div>
+      <button id="action" type="button" 
+              class="btn btn-default action-button">Action</button>
+      <div class="form-group shiny-input-container">
+        <label class="control-label" for="x">X</label>
+        <input class="js-range-slider" 
+               id="x" 
+               data-min="1" 
+               data-max="100"
+               data-from="50" data-step="1" data-grid="true" 
+               data-grid-num="9.9" data-grid-snap="false" 
+               data-prettify-separator="," 
+               data-keyboard="true" 
+               data-keyboard-step="1.01010101010101" 
+               data-drag-interval="true" 
+               data-data-type="number"/>
+      </div>
+    </div>
+  </body>
+</html>

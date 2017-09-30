@@ -1,0 +1,34 @@
+
+# hist(data_churn_named$"state")
+# x must be numeric
+
+# hist(data_churn_named$"account length")
+# not needed because not of useful information
+
+# hist(data_churn_named$"area code")
+# not needed because not of useful information
+
+# hist(data_churn_named$"phone number")
+# not needed because not of useful information
+
+# hist(data_churn_named$"international plan")
+# not needed because not of useful information
+
+# hist(data_churn_named$"voice mail plan")
+# not needed because not of useful information
+
+hist(data_churn_named$"number vmail messages")
+hist(data_churn_named$"total day minutes")
+hist(data_churn_named$"total day calls")
+hist(data_churn_named$"total day charge")
+hist(data_churn_named$"total eve minutes")
+hist(data_churn_named$"total eve calls")
+hist(data_churn_named$"total eve charge")
+hist(data_churn_named$"total night minutes")
+hist(data_churn_named$"total night calls")
+hist(data_churn_named$"total night charge")
+hist(data_churn_named$"total intl minutes")
+hist(data_churn_named$"total intl calls")
+hist(data_churn_named$"total intl charge")
+hist(data_churn_named$"number customer service calls")
+hist(data_churn_named$"churn value")

@@ -1,0 +1,359 @@
+Use 80% for training and 20% for testing
+
+------------------------------------------------------------------------------------
+ dim(data_churn_named)
+[1] 5000   21
+
+ test_indexes = sample(1:nrow(data_churn_named), size=0.2*nrow(data_churn_named))
+
+ data_training_churn <- data_churn_named[-test_indexes,]
+
+ dim(data_training_churn)
+[1] 4000   21
+
+ data_testing_churn <- data_churn_named[test_indexes,]
+ dim(data_testing_churn)
+[1] 1000   21
+
+------------------------------------------------------------------------------------
+	
+library(tree)
+churn_model_dt <- tree(churn.value ~ .,data_training_churn)
+
+
+Code to convert column names with spaces to column names with dots
+
+make.names(names(data_training_churn))
+new_names <- make.names(names(data_training_churn))
+
+colnames(data_training_churn) <- new_names
+colnames(data_testing_churn) <- new_names
+
+
+-------------------------------------
+data loaded to MySql Tables
+
+mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",host='127.0.0.1')
+
+dbListTables(mydb)
+"tab_churn"      "tab_state_abbv"
+
+dbListFields(mydb,"tab_churn")
+dbListFields(mydb,"tab_state_abbv")
+
+churn_data <- fetch(dbSendQuery(mydb,"select * from tab_churn"),n=-1)
+
+# to clear result set before new query
+dbClearResult(dbListResults(mydb)[[1]])
+
+- fetch unique states and names
+fetch(dbSendQuery(mydb,"select state, abbrev from tab_state_abbv where abbrev in (select distinct(state) from tab_churn);"),n=6)
+
+select * from tab_churn as a,tab_state_abbv as b where a.state = b.abbrev;
+
+
+result <- fetch(dbSendQuery(mydb,"select b.region, a.state, a.international_plan, a.voice_mail_plan, a.number_vmail_messages, a.total_day_minutes, a.total_day_calls, a.total_day_charge, a.total_eve_minutes, a.total_eve_calls, a.total_eve_charge, a.total_night_minutes, a.total_night_calls, a.total_night_charge, a.total_intl_minutes, a.total_intl_calls, a.total_intl_charge, a.number_customer_service_calls, a.churn_value from tab_state_abbv as b, tab_churn as a where a.state = b.abbrev;"),n=-1)
+
+dim(result)
+5000 19
+
+set.seed(2)
+test_indices <- sample(1:nrow(result),size=0.3*nrow(result))
+
+testing_dataset <- result[test_indices,]
+> training_dataset <- result[-test_indices,]
+> dim(training_dataset)
+[1] 3500   19
+> dim(testing_dataset)
+[1] 1500   19
+
+
+
+
+-------------------------------------------------------------------------------------------
+Support Vector Machine
+
+[1] "region"                        "state"                         "international_plan"           
+ [4] "voice_mail_plan"               "number_vmail_messages"         "total_day_minutes"            
+ [7] "total_day_calls"               "total_day_charge"              "total_eve_minutes"            
+[10] "total_eve_calls"               "total_eve_charge"              "total_night_minutes"          
+[13] "total_night_calls"             "total_night_charge"            "total_intl_minutes"           
+[16] "total_intl_calls"              "total_intl_charge"             "number_customer_service_calls"
+[19] "churn_value"  
+
+set.seed(3233)
+
+------------Linear kernel
+
+svm_linear <- train(churn_value ~ ., data = training_dataset, method="svmlinear", trControl=trctrl, preProcess = c("center","scale"), tuneLength=10)
+
+Support Vector Machines with Linear Kernel 
+
+3500 samples
+  18 predictors
+   2 classes: 'False', 'True' 
+
+Pre-processing: centered (69), scaled (69) 
+Resampling: Cross-Validated (10 fold, repeated 3 times) 
+Summary of sample sizes: 3150, 3151, 3150, 3150, 3150, 3149, ... 
+Resampling results:
+
+  Accuracy   Kappa      
+  0.8595245  0.003825618
+
+Tuning parameter 'C' was held constant at a value of 1
+
+
+test_prediction <- predict(svm_linear, newdata=testing_dataset)
+test_prediction
+
+
+confusionMatrix(test_prediction,testing_dataset$churn_value)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction False True
+     False  1285  215
+     True      0    0
+                                         
+               Accuracy : 0.8567         
+                 95% CI : (0.8379, 0.874)
+    No Information Rate : 0.8567         
+    P-Value [Acc > NIR] : 0.5182         
+                                         
+                  Kappa : 0              
+ Mcnemar's Test P-Value : <2e-16         
+                                         
+            Sensitivity : 1.0000         
+            Specificity : 0.0000         
+         Pos Pred Value : 0.8567         
+         Neg Pred Value :    NaN         
+             Prevalence : 0.8567         
+         Detection Rate : 0.8567         
+   Detection Prevalence : 1.0000         
+      Balanced Accuracy : 0.5000         
+                                         
+       'Positive' Class : False          
+
+
+85 percent accuracy
+-------------------------------------
+
+
+-------------- Non linear kernel SVM
+svm_radial <- train(churn_value ~.,data = training_dataset, method="svmRadial",trControl=trctrl,preProcess=c("center","scale"),tuneLength=10)
+> svm_radial
+Support Vector Machines with Radial Basis Function Kernel 
+
+3500 samples
+  18 predictors
+   2 classes: 'False', 'True' 
+
+Pre-processing: centered (69), scaled (69) 
+Resampling: Cross-Validated (10 fold, repeated 3 times) 
+Summary of sample sizes: 3150, 3150, 3151, 3149, 3151, 3150, ... 
+Resampling results across tuning parameters:
+
+  C       Accuracy   Kappa
+    0.25  0.8594297  0    
+    0.50  0.8594297  0    
+    1.00  0.8594297  0    
+    2.00  0.8594297  0    
+    4.00  0.8594297  0    
+    8.00  0.8594297  0    
+   16.00  0.8594297  0    
+   32.00  0.8594297  0    
+   64.00  0.8594297  0    
+  128.00  0.8594297  0    
+
+Tuning parameter 'sigma' was held constant at a value of 0.007431666
+Accuracy was used to select the optimal model using  the largest value.
+The final values used for the model were sigma = 0.007431666 and C = 0.25.
+
+confusionMatrix(test_prediction_radial,testing_dataset$churn_value)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction False True
+     False  1285  215
+     True      0    0
+                                         
+               Accuracy : 0.8567         
+                 95% CI : (0.8379, 0.874)
+    No Information Rate : 0.8567         
+    P-Value [Acc > NIR] : 0.5182         
+                                         
+                  Kappa : 0              
+ Mcnemar's Test P-Value : <2e-16         
+                                         
+            Sensitivity : 1.0000         
+            Specificity : 0.0000         
+         Pos Pred Value : 0.8567         
+         Neg Pred Value :    NaN         
+             Prevalence : 0.8567         
+         Detection Rate : 0.8567         
+   Detection Prevalence : 1.0000         
+      Balanced Accuracy : 0.5000         
+                                         
+       'Positive' Class : False     
+
+
+
+-------------------------------------------------- Decision tree works with factored variable
+
+library(rpart)
+> churnDtree <- rpart(f,data = training_dataset,method = 'class')
+> plot(churnDtree)
+> text(churnDtree, pretty = 0)
+
+churnDtree_test_predict <- predict(churnDtree,testing_dataset,type='class'
++ )
+> length(churnDtree_test_predict)
+[1] 1500
+> dim(churnDtree_test_predict)
+NULL
+
+table(churnDtree_test_predict,testing_dataset$churn_value)
+                       
+churnDtree_test_predict False True
+                  False  1266  109
+                  True     19  106
+> confusionMatrix(churnDtree_test_predict,testing_dataset$churn_value)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction False True
+     False  1266  109
+     True     19  106
+                                                 
+               Accuracy : 0.9146667              
+                 95% CI : (0.8993698, 0.9283156) 
+    No Information Rate : 0.8566667              
+    P-Value [Acc > NIR] : 0.000000000005118056099
+                                                 
+                  Kappa : 0.5791781              
+ Mcnemar's Test P-Value : 0.000000000000003645174
+                                                 
+            Sensitivity : 0.9852140              
+            Specificity : 0.4930233              
+         Pos Pred Value : 0.9207273              
+         Neg Pred Value : 0.8480000              
+             Prevalence : 0.8566667              
+         Detection Rate : 0.8440000              
+   Detection Prevalence : 0.9166667              
+      Balanced Accuracy : 0.7391186              
+                                                 
+       'Positive' Class : False        
+
+
+
+
+--------------------------------------------------------------- Decision tree 2
+
+f <- as.formula(paste("churn_value ~", paste( n[!n %in% c("churn_value","state")],collapse=" + ")))
+> f
+churn_value ~ region + international_plan + voice_mail_plan + 
+    number_vmail_messages + total_day_minutes + total_day_calls + 
+    total_day_charge + total_eve_minutes + total_eve_calls + 
+    total_eve_charge + total_night_minutes + total_night_calls + 
+    total_night_charge + total_intl_minutes + total_intl_calls + 
+    total_intl_charge + number_customer_service_calls
+> churnDtree_1 <- rpart(f,data = training_dataset,method = 'class')
+> plot(churnDtree_1)
+> text(churnDtree_1,pretty = 0)
+> pdf("churnDecisionTree1",width = 10,height = 10)
+> plot(churnDtree_1)
+> dev.off()
+RStudioGD 
+        2 
+> pdf("churnDecisionTree1",width = 10,height = 10)
+> plot(churnDtree_1)
+> text(churnDtree_1,pretty = 0)
+> dev.off()
+RStudioGD 
+        2 
+> churnDtree_1_test_predict <- predict(churnDtree_1,testing_dataset,type='class')
+> confusionMatrix(churnDtree_1_test_predict,testing_dataset$churn_value)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction False True
+     False  1266   68
+     True     19  147
+                                                  
+               Accuracy : 0.942                   
+                 95% CI : (0.9289464, 0.9532869)  
+    No Information Rate : 0.8566667               
+    P-Value [Acc > NIR] : < 0.00000000000000022204
+                                                  
+                  Kappa : 0.7390626               
+ Mcnemar's Test P-Value : 0.0000002659008         
+                                                  
+            Sensitivity : 0.9852140               
+            Specificity : 0.6837209               
+         Pos Pred Value : 0.9490255               
+         Neg Pred Value : 0.8855422               
+             Prevalence : 0.8566667               
+         Detection Rate : 0.8440000               
+   Detection Prevalence : 0.8893333               
+      Balanced Accuracy : 0.8344675               
+                                                  
+       'Positive' Class : False                   
+
+
+------------------------------------------------------------------------
+
+
+Plots for Dashboard
+
+Bar Chart 1 -----------------
+# counts of regions in data 
+
+mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",host='127.0.0.1')
+churn_data_region <- fetch(dbSendQuery(mydb,"select region,count(*) from tab_churn, tab_state_abbv where tab_state_abbv.abbrev = tab_churn.state group by region"),n=-1)
+dbClearResult(dbListResults(mydb)[[1]])
+plot_ly(churn_data, x=churn_data$region, y=churn_data$`count(*)`,type = 'bar')
+
+
+Bar Chart 2 -----------------
+# counts of region in data with breakdown of churners and non-churners
+
+mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",host='127.0.0.1')
+churn_region_true_cnt <- fetch(dbSendQuery(mydb,"select region,count(*) from tab_churn, tab_state_abbv where tab_state_abbv.abbrev = tab_churn.state and tab_churn.churn_value='True' group by region;"),n=-1)
+dbClearResult(dbListResults(mydb)[[1]])
+churn_region_false_cnt <- fetch(dbSendQuery(mydb,"select region,count(*) from tab_churn, tab_state_abbv where tab_state_abbv.abbrev = tab_churn.state and tab_churn.churn_value='False' group by region;"),n=-1)
+dbClearResult(dbListResults(mydb)[[1]])
+
+plot_ly(churn_data, x=churn_data$region, y=churn_data$`count(*)`,type = 'bar') %>%
+add_trace(y=churn_region_true_cnt$`count(*)`) %>%
+add_trace(y=churn_region_false_cnt$`count(*)`) %>%
+layout(yaxis = list(title = 'Counts'), barmode = 'group')
+
+
+
+Bar Chart 3 -----------------
+# counts of all states in data with breakdown of churners and non-churners
+
+mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",host='127.0.0.1')
+churn_state_counts <- fetch(dbSendQuery(mydb,"select v1.state,v1.counts as churners,v2.counts as non_churners from v_state_true_cnt as v1, v_state_false_cnt as v2 where v1.state=v2.state;"),n=-1)
+dbClearResult(dbListResults(mydb)[[1]])
+plot_ly(churn_state_counts,type='bar',x=churn_state_counts$state,y=churn_state_counts$churners,name="Churners") %>% add_trace(y=churn_state_counts$non_churners,name="Non-Churners") %>% layout(yaxis=list(title = "Counts"), barmode = 'group')
+
+
+
+----------------------------------------------- Neural network
+
+f <- as.formula(paste("churn_value ~", paste(n[!n %in% c("churn_value","state","region","international_plan","voice")],collapse=" + ")))
+
+nn <- neuralnet(f,data = training_dataset,hidden = c(5,3),linear.output = F)
+
+Error in neurons[[i]] %*% weights[[i]] : 
+  requires numeric/complex matrix/vector arguments
+
+
+
+
+---------------------------------------------------------------------------------
+EOF
+---------------------------------------------------------------------------------
+
