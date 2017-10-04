@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!-- template.html -->
+<html>
+<head>    
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <link rel="stylesheet" type="text/css"  href="sticky-footer-navbar.css" />
+  <link rel="stylesheet" type="text/css" href="page_1_dashboard.css"/>
+  <link rel="stylesheet" type="text/css" href="page_1_css.css">
+
+</head>
+
+<body>
+
+  {{ plotOutput("plot_pie_1", height = 800,width = 950) }}
+
+  <nav class="navbar navbar-fixed-top navbar-inverse bg-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" id="nav-home" data-toggle="tab" href="#jumbo">Dashboard Churn</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li></li>
+        <li><a id="nav-menu2" data-toggle="tab" href="#home">Home</a></li>
+        <li><a id="nav-menu2" data-toggle="tab" href="#menu2">Menu2</a></li>
+        <li><a id="nav-menu3" data-toggle="tab" href="#menu3">Menu3</a></li>
+        <li><a id="nav-menu3" data-toggle="tab" href="#plot_pie_1">Plot pie1</a></li>
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="tab-content" style="overflow-y: scroll; height: 570px; padding: 50px; border-top: 50px;">
+
+    <div id="jumbo" class="jumbotron tab-pane fade in active">
+      <h1 style="padding-left: 30px;">Intelligent churn prediction system</h1>
+      <p style="padding-left: 30px;">Visual analytics dashboard</p>
+    </div>
+
+
+    <div id="home" class="tab-pane fade">
+      <h1>Home</h1>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac libero ante. Proin ac pharetra sem. Vestibulum mi ligula, varius ut eros ut, suscipit tristique sem. Nulla congue ullamcorper ligula tempor efficitur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum dictum, est et tincidunt dictum, ante mi tincidunt tellus, dapibus faucibus augue sem quis ante. Proin sit amet odio elementum, aliquet lectus porttitor, pharetra purus. Quisque feugiat magna nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare vitae est ut consectetur. Sed eu fringilla purus. Donec vehicula odio non erat fringilla posuere. Proin ut faucibus est.
+      </p>
+    </div>
+
+    <div id="attr" class="tab-pane fade">
+    <br>
+    <p><strong>Data attributes</strong> The following lists the characteristics of the attributes of the Churn data</p>
+    {{ verbatimTextOutput("summary") }}
+    </div>
+    <div id="summary" class="tab-pane fade">{{ verbatimTextOutput("summary") }}</div>
+    <div id="graph" class="tab-pane fade">{{ verbatimTextOutput("summary") }}</div>
+
+
+    <!-- #plot_pie_1 -->
+    <div id="plot_pie_1" class="tab-pane fade">
+      {{ plotOutput("plot_pie_1", height = 800,width = 950) }}
+    </div>
+
+    <div id="plot_bar_1" class="tab-pane fade">{{ plotOutput("plot_bar_1", height = 900,width = 950) }}</div>
+    <div id="plot_bar_2" class="tab-pane fade">{{ plotOutput("plot_bar_2", height = 900,width = 950) }}</div>
+    <div id="plot2" class="tab-pane fade">{{ plotOutput("plot2", height = 450,width = 950) }}</div>
+    <div id="plot3" class="tab-pane fade">{{ plotOutput("plot3", height = 450,width = 950) }}</div>
+
+
+  </div>
+
+
+<!-- Footer of Application -->      
+<footer class="footer">
+  <div class="container">
+    <span class="text-muted">Parth Sarangi</span>
+  </div>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+</body>
+</html>

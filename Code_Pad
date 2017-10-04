@@ -342,7 +342,7 @@ plot_ly(churn_state_counts,type='bar',x=churn_state_counts$state,y=churn_state_c
 
 
 ----------------------------------------------- Neural network
-
+n <- names(training_dataset)
 f <- as.formula(paste("churn_value ~", paste(n[!n %in% c("churn_value","state","region","international_plan","voice")],collapse=" + ")))
 
 nn <- neuralnet(f,data = training_dataset,hidden = c(5,3),linear.output = F)
@@ -351,7 +351,8 @@ Error in neurons[[i]] %*% weights[[i]] :
   requires numeric/complex matrix/vector arguments
 
 
-
+------------------------------------------- Disconnect any open DB connections
+for (con in dbListConnections(MySQL())) dbDisconnect(con)
 
 ---------------------------------------------------------------------------------
 EOF

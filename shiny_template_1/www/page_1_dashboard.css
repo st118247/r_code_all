@@ -21,24 +21,6 @@ h1 {
  * Sidebar
  */
 
-nav.sidebar1 {
-  position: relative;
-  top: 0px;
-  bottom: 50px;
-  left: 0;
-  height: absolute;
-  color: white;
-  z-index: 1000;
-  padding: 0px;
-  overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  border-right: 1px solid #eee;
-}
-
-/*.a {
-  color: white !important;
-}*/
-
 .sidebar {
   position: relative;
   top: 0px;
@@ -50,8 +32,6 @@ nav.sidebar1 {
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   border-right: 1px solid #eee;
-  color: black;
-  /* background: linear-gradient(rgba(96,108,136,1) 0%,rgba(63,76,107,1) 100%); */
 }
 
 /* Sidebar navigation */
