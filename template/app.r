@@ -1,3 +1,4 @@
+library(shinythemes)
 library(shiny)
 library(ggplot2)
 library(dplyr)
@@ -24,46 +25,67 @@ churn_state_counts <- fetch(dbSendQuery(mydb,"select v1.state,v1.counts as churn
 dbClearResult(dbListResults(mydb)[[1]])
 dbDisconnect(mydb)
 
+ui <- bootstrapPage(
+    theme = shinytheme("sandstone"),
+     shinythemes::themeSelector(),
+    navbarPage(
+        "Churn Prediction",
+        tabPanel("Data",
+            fluidPage(
+                tags$h1("Intelligent Churn Prediction System"),
+                tags$h4("This system is designed to show the statistics of the customers of the system.",
+                "Below is the snapshot of the exisitng cutomer call details records data."),
+                tabsetPanel(type = "tabs",
+                    tabPanel("Description", tags$p("The churn data is aggregated call")),
+                    tabPanel("Data Recods", dataTableOutput("table")),
+                    tabPanel("Summary of Variables", verbatimTextOutput("summary"))
+                    )
+                )
+            ),
+        tabPanel("Plots",
+            fluidPage(
+                tabsetPanel(type = "tabs",
+                    tabPanel("Summary of Variables", plotlyOutput("bar")),
+                    tabPanel("Summary of Variables", plotlyOutput("bar2")),
+                    tabPanel("Summary of Variables", plotlyOutput("bar3"))
+                    )
+                )
+            ),
+        tabPanel("About",
+            "About Page"
+            )
+        )
+    )
 
-ui <- fluidPage(
-	titlePanel("BC Liquor Store prices"),
-	sidebarLayout(
-		sidebarPanel(),
-		mainPanel(
-			tabPanel("Plot", plotOutput("state")),
-			br(), br(),
-			# plotlyOutput("bar"),
-			# br(), br(),
-			# plotlyOutput("bar2"),
-			# 			br(), br(),
-			tabPanel("Plot2", plotlyOutput("bar2"),br(),br()),
-			plotlyOutput("bar3")
-			# plotlyOutput("bar3"),
-			)
-		)
-	)
 
 server <- function(input, output) {
 
-	# output$state <- renderPlot({
-	# 	hist(churn[[input$typeInput]])
-	# 	})
+    output$table <- renderDataTable(churn,
+        options = list(
+          pageLength = 5,
+          initComplete = I("function(settings, json) {alert('Done.');}")
+          )
+        )
+    output$summary <- renderPrint({
+        summary(churn)
+        })
+    
+    output$bar <- renderPlotly({
+        plot_ly(churn_data_region, x=churn_data_region$region, y=churn_data_region$`count(*)`,type = 'bar')
+        })
 
-	output$bar <- renderPlotly({
-		plot_ly(churn_data_region, x=churn_data_region$region, y=churn_data_region$`count(*)`,type = 'bar')
-		})
-	output$bar2 <- renderPlotly({
-		plot_ly(churn_data_region, x=churn_data_region$region, y=churn_data_region$`count(*)`,type = 'bar') %>%
-		add_trace(y=churn_region_true_cnt$`count(*)`) %>%
-		add_trace(y=churn_region_false_cnt$`count(*)`) %>%
-		layout(yaxis = list(title = 'Counts'), barmode = 'group')
-		})
+    output$bar2 <- renderPlotly({
+        plot_ly(churn_data_region, x=churn_data_region$region, y=churn_data_region$`count(*)`,type = 'bar') %>%
+        add_trace(y=churn_region_true_cnt$`count(*)`) %>%
+        add_trace(y=churn_region_false_cnt$`count(*)`) %>%
+        layout(yaxis = list(title = 'Counts'), barmode = 'group')
+        })
 
-	output$bar3 <- renderPlotly({
-		plot_ly(churn_state_counts[1:10,],type='bar',x=churn_state_counts$state,y=churn_state_counts$churners,name="Churners") %>% 
-		add_trace(y=churn_state_counts$non_churners,name="Non-Churners") %>% 
-		layout(yaxis=list(title = "Counts"), barmode = 'group')
-		})
+    output$bar3 <- renderPlotly({
+        plot_ly(churn_state_counts[1:10,],type='bar',x=churn_state_counts$state,y=churn_state_counts$churners,name="Churners") %>% 
+        add_trace(y=churn_state_counts$non_churners,name="Non-Churners") %>% 
+        layout(yaxis=list(title = "Counts"), barmode = 'group')
+        })
 
 }
 
