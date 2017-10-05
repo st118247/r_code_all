@@ -338,7 +338,7 @@ mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",hos
 churn_state_counts <- fetch(dbSendQuery(mydb,"select v1.state,v1.counts as churners,v2.counts as non_churners from v_state_true_cnt as v1, v_state_false_cnt as v2 where v1.state=v2.state;"),n=-1)
 dbClearResult(dbListResults(mydb)[[1]])
 plot_ly(churn_state_counts,type='bar',x=churn_state_counts$state,y=churn_state_counts$churners,name="Churners") %>% add_trace(y=churn_state_counts$non_churners,name="Non-Churners") %>% layout(yaxis=list(title = "Counts"), barmode = 'group')
-
+dbDisconnect(mydb)
 
 
 ----------------------------------------------- Neural network
@@ -353,6 +353,8 @@ Error in neurons[[i]] %*% weights[[i]] :
 
 ------------------------------------------- Disconnect any open DB connections
 for (con in dbListConnections(MySQL())) dbDisconnect(con)
+
+
 
 ---------------------------------------------------------------------------------
 EOF

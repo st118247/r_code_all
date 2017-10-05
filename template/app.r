@@ -27,8 +27,8 @@ dbDisconnect(mydb)
 
 ui <- bootstrapPage(
     theme = shinytheme("sandstone"),
-     shinythemes::themeSelector(),
-    navbarPage(
+     # shinythemes::themeSelector(),
+    navbarPage( 
         "Churn Prediction",
         tabPanel("Data",
             fluidPage(
@@ -69,7 +69,7 @@ server <- function(input, output) {
     output$summary <- renderPrint({
         summary(churn)
         })
-    
+
     output$bar <- renderPlotly({
         plot_ly(churn_data_region, x=churn_data_region$region, y=churn_data_region$`count(*)`,type = 'bar')
         })
