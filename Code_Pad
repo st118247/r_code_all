@@ -258,6 +258,7 @@ churn_value ~ region + international_plan + voice_mail_plan +
     total_eve_charge + total_night_minutes + total_night_calls + 
     total_night_charge + total_intl_minutes + total_intl_calls + 
     total_intl_charge + number_customer_service_calls
+
 > churnDtree_1 <- rpart(f,data = training_dataset,method = 'class')
 > plot(churnDtree_1)
 > text(churnDtree_1,pretty = 0)
