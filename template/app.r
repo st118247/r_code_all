@@ -10,6 +10,7 @@ library(scales)
 library(lattice)
 library(dplyr)
 
+meta_data_df <- read.csv("metadata.csv",stringsAsFactors=TRUE,header=TRUE)
 churn <- read.csv("churn_data.csv",stringsAsFactors=FALSE,header = TRUE)
 us_lat_long <- read.csv("us_state_lat_long.csv",stringsAsFactors=FALSE,header = TRUE)
 
@@ -38,7 +39,7 @@ dbClearResult(dbListResults(mydb)[[1]])
 dbDisconnect(mydb)
 
 ui <- bootstrapPage(
-    theme = shinytheme("sandstone"),
+    theme = shinytheme("flatly"),
      # shinythemes::themeSelector(),
      navbarPage(
         "Churn Prediction",
@@ -48,7 +49,12 @@ ui <- bootstrapPage(
                 tags$h4("This system is designed to show the statistics of the customers of the system.",
                     "Below is the snapshot of the exisitng cutomer call details records data."),    
                 tabsetPanel(type = "tabs",
-                    tabPanel("Description", tags$p("The churn data is aggregated call")),
+                    tabPanel("Description", 
+                        fluidPage(
+                            tags$h3("Meta data of the churn dataset"),
+                            tableOutput('tbl')
+                            )
+                        ),
                     tabPanel("Data Recods", dataTableOutput("table")),
                     tabPanel("Summary of Variables", verbatimTextOutput("summary"))
                     )
@@ -148,6 +154,12 @@ ui <- bootstrapPage(
 
 
      server <- function(input, output) {
+
+        output$tbl <- renderTable({ meta_data_df },  
+                 striped = TRUE,
+                 hover=TRUE,  
+                 spacing = 'l',  
+                 width = '100%')
 
         output$map <- renderLeaflet({
             leaflet() %>%

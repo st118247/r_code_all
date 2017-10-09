@@ -1,0 +1,2 @@
+get_user_info           Get the logged in user's email and other info
+whitelist               Whitelist check

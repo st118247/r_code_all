@@ -1,0 +1,40 @@
+Authentication          R6 environment to store authentication
+                        credentials
+check_cached_scopes     Check token scopes
+gar_api_generator       googleAuthR data fetch function generator
+gar_attach_auto_auth    Auto Authentication function for use within
+                        .onAttach
+gar_auth                Authorize 'googleAuthR'
+gar_auth_js             Shiny JavaScript Google Authorisation [Server
+                        Module]
+gar_auth_jsUI           Shiny JavaScript Google Authorisation [UI
+                        Module]
+gar_auth_service        JSON service account authentication
+gar_auto_auth           Perform auto authentication
+gar_batch               Turn a list of gar_fetch_functions into batch
+                        functions
+gar_batch_walk          Walk data through batches
+gar_create_api_objects
+                        Create the API objects from the Discovery API
+gar_create_api_skeleton
+                        Create an API library skeleton
+gar_create_package      Create a Google API package
+gar_discovery_api       Get meta data details for specified Google API
+gar_discovery_apis_list
+                        Get a list of Google API libraries
+gar_gadget              Gadget for easy authentication
+gar_gce_auth            Authenticate on Google Compute Engine
+gar_shiny_getUrl        Get the Shiny Apps URL.
+gar_token_info          Get current token summary
+googleAuth              Server side google auth (Shiny Module)
+googleAuthR             googleAuthR: Easy Authentication with Google
+                        OAuth2 APIs
+googleAuthUI            A Login button (Shiny Module)
+loginOutput             Login/logout Shiny output
+myMessage               Customer message log level
+reactiveAccessToken     Create a reactive Google OAuth2 token
+renderLogin             Render a Google API Authentication Login/logout
+                        button
+revokeEventObserver     Listens for a user revoking authentication
+with_shiny              Turn a googleAuthR data fetch function into a
+                        Shiny compatible one

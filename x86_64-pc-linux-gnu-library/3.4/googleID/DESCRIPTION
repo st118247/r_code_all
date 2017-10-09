@@ -1,0 +1,26 @@
+Package: googleID
+Title: Authenticate users via the Google+ API
+Version: 0.0.9001
+Authors@R: c(person("Mark", "Edmondson",email = "r@sunholo.com",
+                  role = c("aut", "cre")))
+Description: Interface with Google+ API,
+    this uses googleAuthR as a backend so is compatible with similar packages.
+License: MIT + file LICENSE
+LazyData: TRUE
+Depends: R (>= 3.2.0)
+Imports: googleAuthR (>= 0.2.0)
+Suggests: shiny, knitr
+RoxygenNote: 5.0.1
+Author: Mark Edmondson [aut, cre]
+Maintainer: Mark Edmondson <r@sunholo.com>
+Built: R 3.4.1; ; 2017-10-09 09:37:11 UTC; unix
+RemoteType: github
+RemoteHost: https://api.github.com
+RemoteRepo: googleID
+RemoteUsername: MarkEdmondson1234
+RemoteRef: master
+RemoteSha: d42b7cc18f447d66beb790610a6b3b8470d2d7e2
+GithubRepo: googleID
+GithubUsername: MarkEdmondson1234
+GithubRef: master
+GithubSHA1: d42b7cc18f447d66beb790610a6b3b8470d2d7e2

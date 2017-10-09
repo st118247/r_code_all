@@ -1,0 +1,20 @@
+Name of Variable , Description            , Type    
+State            , state`s of USA           , discrete
+Account Length   , months of active usage , continuous
+voice mail plan , Subscribed to voice mail , discrete
+number vmail messages , number of voice-mail messages ,  continuous
+international plan , Subscribed to international plan ,  discrete
+total intl minutes ,  total number of international calls  ,  continuous
+total intl calls , total charge of international calls ,  continuous
+total intl charge , total charge of international calls,  continuous
+total day minutes ,  total minutes of day calls  ,  continuous   
+total day calls , total number of day calls ,  continuous   
+total day charge , total charge of day calls ,  continuous   
+total eve minutes , total minutes of evening calls ,  continuous   
+total eve calls , total number of evening call  ,  continuous   
+total eve charge , total charge of evening calls  ,  continuous   
+total night minutes , total minutes of night call ,  continuous   
+total night calls , total number of night calls ,  continuous   
+total night charge , total charge of night calls  ,  continuous   
+number customer service calls , number of calls to customer service ,  continuous   
+churn value , if customer churned or not , discrete 
