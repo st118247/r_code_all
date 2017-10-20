@@ -1,5 +1,6 @@
 library(shinythemes)
 library(shiny)
+library(shinyjs)
 library(ggplot2)
 library(dplyr)
 library(RMySQL)
@@ -9,9 +10,11 @@ library(RColorBrewer)
 library(scales)
 library(lattice)
 library(dplyr)
+library(shinyWidgets)
 
 meta_data_df <- read.csv("metadata.csv",stringsAsFactors=TRUE,header=TRUE)
 churn <- read.csv("churn_data.csv",stringsAsFactors=FALSE,header = TRUE)
+df_churn_names <- names(churn)
 us_lat_long <- read.csv("us_state_lat_long.csv",stringsAsFactors=FALSE,header = TRUE)
 
 v_states <- sort(unique(churn[[2]]))
@@ -38,11 +41,44 @@ dbClearResult(dbListResults(mydb)[[1]])
 # should select region wise counts to display as graphs - 4 graphs
 dbDisconnect(mydb)
 
+# Choices for drop-downs
+vars <- c(
+  "Is SuperZIP?" = "superzip",
+  "Centile score" = "centile",
+  "College education" = "college",
+  "Median income" = "income",
+  "Population" = "adultpop"
+  )
+
 ui <- bootstrapPage(
-    theme = shinytheme("flatly"),
-     # shinythemes::themeSelector(),
-     navbarPage(
-        "Churn Prediction",
+    tags$head(
+        tags$title("ICPCR"),
+        tags$link(rel = "stylesheet", type = "text/css", href = "footer.css")
+
+        ),
+    theme = shinytheme("paper"),
+      navbarPage("",
+        tabPanel("Login/Logout",
+            textInput(inputId, label="User", value = "", width = NULL, placeholder = NULL)
+            ),
+        tabPanel("Home",
+            fluidPage(
+                tags$div(
+                    tags$h1("Intelligent Churn Prediction System - ICPCR"),
+                    tags$p("This system is designed to help users to predict the churning of cutomers.")
+                    ),
+                tags$div(
+                    tags$h3("Description"),
+                    tags$p("Churn is the ")
+                    ),
+                useShinyjs(),
+                tags$div(
+                    tags$h4("Customize the theme of dash with your own preference"),
+                    materialSwitch(inputId = "toggle1", label = "Toggle Me", status = "primary", right = TRUE)
+                ),
+                div(id="theme",shinythemes::themeSelector())
+                )
+            ),
         tabPanel("Data",
             fluidPage(
                 tags$h1("Intelligent Churn Prediction System"),
@@ -71,7 +107,14 @@ ui <- bootstrapPage(
                         ),
                     tabPanel("Variable - States", 
                         tags$h3("The states bar plot shows the counts in the states and breakup of churners to non-churners"),
-                        plotlyOutput("bar3"))
+                        selectInput(inputId = "n_breaks",
+                           label = "Number of bins in histogram (approximate):",
+                                 # choices = c(10, 20, 35, 50),
+                                 choices = df_churn_names,
+                                 selected = 20),
+                        plotOutput('bar4'),
+                        plotlyOutput("bar3")
+                        )
                     )
                 )
             ),
@@ -139,27 +182,42 @@ ui <- bootstrapPage(
                 absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                     draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
                     width = 330, height = "auto",
-                    h2("ZIP explorer")
-                #     selectInput("color", "Color", vars),
-                #     selectInput("size", "Size", vars, selected = "adultpop"),
-                #     conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
+                    h2("ZIP explorer"),
+                    selectInput("color", "Color", vars),
+                    selectInput("size", "Size", vars, selected = "adultpop")
+                    # conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
                 #         # Only prompt for threshold when coloring or sizing by superzip
                 #         numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
                 )
                 )
             )
+        ),
+tags$footer(
+    class="footer",
+    tags$div(class="container","Designed by AIT CSIM & Parth Sarangi")
+        # tags$div(class="col",
+        #     tags$div(class="col"),
+        # tags$div(class="col"),
+        # tags$div(
+        #     class="col align-self-end",
+        #     "Designed by Parth"
+        #     )
+        # )
         )
 )
      # )
 
 
-     server <- function(input, output) {
+     server <- function(input, output, session) {
+
+        observeEvent(input$toggle1,{toggle("theme")
+            })
 
         output$tbl <- renderTable({ meta_data_df },  
-                 striped = TRUE,
-                 hover=TRUE,  
-                 spacing = 'l',  
-                 width = '100%')
+           striped = TRUE,
+           hover=TRUE,  
+           spacing = 'l',  
+           width = '100%')
 
         output$map <- renderLeaflet({
             leaflet() %>%
@@ -198,6 +256,12 @@ ui <- bootstrapPage(
         layout(yaxis=list(title = "Counts"), barmode = 'group')
         })
 
+    churndim <- reactive ({input$n_breaks})
+
+    output$bar4 <- renderPlot({
+        hist(churn[,input$n_breaks],main="Histogram",xlab=input$n_breaks,col = "#75AADB", border = "white")
+        })
+
     output$contents <- renderTable({
         # input$file1 will be NULL initially. After the user selects
         # and uploads a file, head of that data file by default,
@@ -212,10 +276,10 @@ ui <- bootstrapPage(
 
         if(input$disp == "head") {
             return(head(df))
-            }
-            else {
-                return(df)
-            }
+        }
+        else {
+            return(df)
+        }
 
         })
 }

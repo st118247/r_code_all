@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <!-- Required meta tags -->
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+ <!-- Bootstrap CSS -->
+<!--     <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="bootstrap-grid.min.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link href="sticky-footer.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
+    <link href="page_1_css.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="page_1_dashboard.css">
+
+     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+     <script src="https://apis.google.com/js/platform.js" async defer></script>
+     <meta name="google-signin-client_id" content="637236591306-o449v1pv5eek4fjkk32l89m9mpfnhgjh.apps.googleusercontent.com">
+
+  <!-- <script src="shared/jquery.js" type="text/javascript"></script>
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="shared/shiny.css"/> -->
+</head>
+
+<body>
+
+  <nav class="navbar navbar-fixed-top navbar-inverse bg-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" id="nav-home" data-toggle="tab" href="#jumbo">Dashboard Churn</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li></li>
+        <li><a id="nav-menu2" data-toggle="tab" href="#home">Home</a></li>
+        <li><a id="nav-menu2" data-toggle="tab" href="#menu2">Data</a></li>
+        <li><a id="nav-menu3" data-toggle="tab" href="#menu3">Plots</a></li>
+        <li><a id="nav-menu2" data-toggle="tab" href="#menu2">Predict</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="tab-content" style="overflow-y: scroll; height: 570px; padding: 50px; border-top: 50px;">
+    <div id="jumbo" class="jumbotron tab-pane fade in active">
+      <h1 style="padding-left: 30px;">Intelligent churn prediction system</h1>
+      <p style="padding-left: 30px;">A visual dashboard with analytics and prediction</p>
+      <p style="padding-left: 30px;">Predict the status of existing customers and identify potential churners </p>
+      <div class="g-signin2" data-onsuccess="onSignIn"></div>
+      <a href="#" onclick="signOut();">Sign out</a>
+    </div>
+
+    <div id="home" class="tab-pane fade">
+      <h1>Home</h1>
+      <p>
+        The system works on the call detail records collected from the telecom database.
+        <br>
+        Call detail records are summarised and 19 potential dimensions are identifed to build predction models.
+      </p>
+      <h1>Dashboard overview</h1>
+      <p>
+        The dashboard is divided into three main parts.
+        <br>
+        Viz.
+        <ul><li>Data viewer</li><li>Plots</li><li>Predict</li></ul>
+      </p>
+    </div>
+    <div id="menu1" class="tab-pane fade">
+      <h1>Menu1</h1>
+      <p>
+        Donec consectetur tortor et mi pharetra, ac finibus enim venenatis. Etiam sem dui, placerat ac dolor eget, malesuada venenatis orci. Integer rhoncus a eros ac rutrum. Vestibulum sit amet enim odio. Donec mauris ante, luctus sit amet semper et, consectetur at augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus dignissim mollis sem, eget varius augue rutrum vel. Curabitur rutrum varius neque sit amet elementum. In feugiat sollicitudin magna vel imperdiet. Cras congue volutpat nisi, vitae tincidunt odio aliquam sit amet. Proin a dolor et ante luctus venenatis at placerat nunc. Sed porttitor consequat nulla id vulputate. Nunc eu nibh eleifend, eleifend diam sit amet, consequat lorem. Ut cursus velit eget eros rutrum auctor.
+      </p>
+    </div>
+    <div id="menu2" class="tab-pane fade">
+      <h1>Menu 2</h1>
+      <p>
+        This should change
+        <br>
+        Morbi quis ullamcorper velit, ut pulvinar diam. Suspendisse erat lectus, gravida sed mi vel, consectetur consequat ex. Aliquam in diam nisl. Suspendisse vitae vestibulum massa. Quisque a erat lectus. Nam fringilla ligula odio, non pellentesque ante rutrum in. Quisque consectetur pharetra dapibus. Sed et tincidunt nibh. Quisque condimentum est enim. Vivamus eleifend volutpat lacus ut venenatis. Donec tincidunt diam vel tempus mattis. In dapibus, nisi ut placerat faucibus, ex leo pharetra lectus, eu condimentum arcu sem ac lectus. Donec facilisis nulla quis interdum iaculis.
+        <br>
+        <br>
+        <!-- This is the outputs  -->
+        <!--  -->
+        <!--  -->
+        {{ plotOutput("plot_pie_1", height = 800,width = 950) }}
+        <br>
+        {{ verbatimTextOutput("summary") }}
+      </p>
+      <p>
+        Vivamus ut venenatis quam. Integer metus erat, ornare sed gravida quis, efficitur vel odio. Morbi dignissim arcu sed pulvinar consequat. Sed et rutrum lorem. Ut euismod tristique neque, in convallis sapien aliquam iaculis. Curabitur interdum ultrices nisl, aliquet porta ante lobortis ornare. Vivamus porttitor, nibh at consequat imperdiet, lorem neque malesuada nisi, nec dignissim purus sapien a nisl. Etiam iaculis suscipit orci, quis volutpat ligula condimentum sed. Proin fringilla tristique tortor a scelerisque.
+      </p>
+      <p>
+        Nullam pretium orci ac dui laoreet rutrum. Integer a felis tincidunt, porta diam vitae, blandit purus. Nullam quis est nec massa consequat euismod et tempor velit. Cras facilisis sapien ac malesuada viverra. Cras eu neque tristique, porta risus et, pulvinar ex. Etiam iaculis id orci nec malesuada. Morbi fringilla vel nisl ornare pretium. Morbi imperdiet interdum ullamcorper. Donec pellentesque est quis nibh vulputate, ac ultricies turpis euismod. Vestibulum euismod lacus vitae turpis facilisis pretium. Curabitur et posuere justo. Nulla quis vehicula lectus, a maximus sapien. Fusce finibus sem quis tellus vehicula laoreet quis a urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac libero ante. Proin ac pharetra sem. Vestibulum mi ligula, varius ut eros ut, suscipit tristique sem. Nulla congue ullamcorper ligula tempor efficitur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum dictum, est et tincidunt dictum, ante mi tincidunt tellus, dapibus faucibus augue sem quis ante. Proin sit amet odio elementum, aliquet lectus porttitor, pharetra purus. Quisque feugiat magna nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare vitae est ut consectetur. Sed eu fringilla purus. Donec vehicula odio non erat fringilla posuere. Proin ut faucibus est.
+      </p>
+      <p>
+        Donec consectetur tortor et mi pharetra, ac finibus enim venenatis. Etiam sem dui, placerat ac dolor eget, malesuada venenatis orci. Integer rhoncus a eros ac rutrum. Vestibulum sit amet enim odio. Donec mauris ante, luctus sit amet semper et, consectetur at augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus dignissim mollis sem, eget varius augue rutrum vel. Curabitur rutrum varius neque sit amet elementum. In feugiat sollicitudin magna vel imperdiet. Cras congue volutpat nisi, vitae tincidunt odio aliquam sit amet. Proin a dolor et ante luctus venenatis at placerat nunc. Sed porttitor consequat nulla id vulputate. Nunc eu nibh eleifend, eleifend diam sit amet, consequat lorem. Ut cursus velit eget eros rutrum auctor.
+      </p>
+      <p>
+        Morbi quis ullamcorper velit, ut pulvinar diam. Suspendisse erat lectus, gravida sed mi vel, consectetur consequat ex. Aliquam in diam nisl. Suspendisse vitae vestibulum massa. Quisque a erat lectus. Nam fringilla ligula odio, non pellentesque ante rutrum in. Quisque consectetur pharetra dapibus. Sed et tincidunt nibh. Quisque condimentum est enim. Vivamus eleifend volutpat lacus ut venenatis. Donec tincidunt diam vel tempus mattis. In dapibus, nisi ut placerat faucibus, ex leo pharetra lectus, eu condimentum arcu sem ac lectus. Donec facilisis nulla quis interdum iaculis.
+      </p>
+      <p>
+        Vivamus ut venenatis quam. Integer metus erat, ornare sed gravida quis, efficitur vel odio. Morbi dignissim arcu sed pulvinar consequat. Sed et rutrum lorem. Ut euismod tristique neque, in convallis sapien aliquam iaculis. Curabitur interdum ultrices nisl, aliquet porta ante lobortis ornare. Vivamus porttitor, nibh at consequat imperdiet, lorem neque malesuada nisi, nec dignissim purus sapien a nisl. Etiam iaculis suscipit orci, quis volutpat ligula condimentum sed. Proin fringilla tristique tortor a scelerisque.
+      </p>
+      <p>
+        Nullam pretium orci ac dui laoreet rutrum. Integer a felis tincidunt, porta diam vitae, blandit purus. Nullam quis est nec massa consequat euismod et tempor velit. Cras facilisis sapien ac malesuada viverra. Cras eu neque tristique, porta risus et, pulvinar ex. Etiam iaculis id orci nec malesuada. Morbi fringilla vel nisl ornare pretium. Morbi imperdiet interdum ullamcorper. Donec pellentesque est quis nibh vulputate, ac ultricies turpis euismod. Vestibulum euismod lacus vitae turpis facilisis pretium. Curabitur et posuere justo. Nulla quis vehicula lectus, a maximus sapien. Fusce finibus sem quis tellus vehicula laoreet quis a urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      </p><p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac libero ante. Proin ac pharetra sem. Vestibulum mi ligula, varius ut eros ut, suscipit tristique sem. Nulla congue ullamcorper ligula tempor efficitur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum dictum, est et tincidunt dictum, ante mi tincidunt tellus, dapibus faucibus augue sem quis ante. Proin sit amet odio elementum, aliquet lectus porttitor, pharetra purus. Quisque feugiat magna nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare vitae est ut consectetur. Sed eu fringilla purus. Donec vehicula odio non erat fringilla posuere. Proin ut faucibus est.
+      </p>
+      <p>
+        Donec consectetur tortor et mi pharetra, ac finibus enim venenatis. Etiam sem dui, placerat ac dolor eget, malesuada venenatis orci. Integer rhoncus a eros ac rutrum. Vestibulum sit amet enim odio. Donec mauris ante, luctus sit amet semper et, consectetur at augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus dignissim mollis sem, eget varius augue rutrum vel. Curabitur rutrum varius neque sit amet elementum. In feugiat sollicitudin magna vel imperdiet. Cras congue volutpat nisi, vitae tincidunt odio aliquam sit amet. Proin a dolor et ante luctus venenatis at placerat nunc. Sed porttitor consequat nulla id vulputate. Nunc eu nibh eleifend, eleifend diam sit amet, consequat lorem. Ut cursus velit eget eros rutrum auctor.
+      </p>
+      <p>
+        Morbi quis ullamcorper velit, ut pulvinar diam. Suspendisse erat lectus, gravida sed mi vel, consectetur consequat ex. Aliquam in diam nisl. Suspendisse vitae vestibulum massa. Quisque a erat lectus. Nam fringilla ligula odio, non pellentesque ante rutrum in. Quisque consectetur pharetra dapibus. Sed et tincidunt nibh. Quisque condimentum est enim. Vivamus eleifend volutpat lacus ut venenatis. Donec tincidunt diam vel tempus mattis. In dapibus, nisi ut placerat faucibus, ex leo pharetra lectus, eu condimentum arcu sem ac lectus. Donec facilisis nulla quis interdum iaculis.
+      </p>
+      <p>
+        Vivamus ut venenatis quam. Integer metus erat, ornare sed gravida quis, efficitur vel odio. Morbi dignissim arcu sed pulvinar consequat. Sed et rutrum lorem. Ut euismod tristique neque, in convallis sapien aliquam iaculis. Curabitur interdum ultrices nisl, aliquet porta ante lobortis ornare. Vivamus porttitor, nibh at consequat imperdiet, lorem neque malesuada nisi, nec dignissim purus sapien a nisl. Etiam iaculis suscipit orci, quis volutpat ligula condimentum sed. Proin fringilla tristique tortor a scelerisque.
+      </p>
+    </div>
+    <div id="menu3" class="tab-pane fade">
+      <h1>HTML UI</h1>
+
+
+      <h3>Head of data:</h3>
+      <div id="table" class="shiny-html-output"></div>
+
+      <h3>data:</h3>
+      <div id="tbl" class="shiny-html-output"></div>
+
+      <h3>summary</h3>
+      <pre id="summary" class="shiny-text-output"></pre>
+      <h1>Last Paragraph</h1>
+      <p>
+        Nullam pretium orci ac dui laoreet rutrum. Integer a felis tincidunt, porta diam vitae, blandit purus. Nullam quis est nec massa consequat euismod et tempor velit. Cras facilisis sapien ac malesuada viverra. Cras eu neque tristique, porta risus et, pulvinar ex. Etiam iaculis id orci nec malesuada. Morbi fringilla vel nisl ornare pretium. Morbi imperdiet interdum ullamcorper. Donec pellentesque est quis nibh vulputate, ac ultricies turpis euismod. Vestibulum euismod lacus vitae turpis facilisis pretium. Curabitur et posuere justo. Nulla quis vehicula lectus, a maximus sapien. Fusce finibus sem quis tellus vehicula laoreet quis a urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      </p>
+    </div>
+  </div>
+</main>
+</div>
+</div>
+
+
+<footer class="footer">
+  <div class="col-12 col-md-auto text-right">
+    <span>Designed by CSIM @ AIT and Parth Sarangi</span>
+  </div>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<!-- <script src="bootstrap.min.js"</script> -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <!-- <script type="text/javascript" src="page_1_jq.js"></script> -->
+
+
+</body>
+</html>

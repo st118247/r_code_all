@@ -265,8 +265,10 @@ churn_value ~ region + international_plan + voice_mail_plan +
 > pdf("churnDecisionTree1",width = 10,height = 10)
 > plot(churnDtree_1)
 > dev.off()
+
 RStudioGD 
         2 
+
 > pdf("churnDecisionTree1",width = 10,height = 10)
 > plot(churnDtree_1)
 > text(churnDtree_1,pretty = 0)
@@ -343,6 +345,7 @@ dbDisconnect(mydb)
 
 
 ----------------------------------------------- Neural network
+library(neuralnet)
 n <- names(training_dataset)
 f <- as.formula(paste("churn_value ~", paste(n[!n %in% c("churn_value","state","region","international_plan","voice")],collapse=" + ")))
 
@@ -357,7 +360,142 @@ for (con in dbListConnections(MySQL())) dbDisconnect(con)
 
 
 
+# converting international_plan and voice_mail_plan to numeric values
+
+churndata <- fetch(dbSendQuery(mydb,"select * from tab_churn order by state;"),n=-1)
+
+churndata_1 <- select(churndata,state,international_plan,voice_mail_plan,churn_value)
+
+churndata_2 <- churndata_1 %>% mutate(int_plan_numeric = ifelse(international_plan == "no", 0, 1)) %>% mutate(voice_mail_plan_numeric = ifelse(voice_mail_plan == "no", 0, 1)
+
+churndata_2 <- data.frame(churndata_1 %>% mutate(int_plan_numeric = ifelse(international_plan == "no", 0, 1)) %>% mutate(voice_mail_plan_numeric = ifelse(voice_mail_plan == "no", 0, 1)), state_num = as.numeric(factor(churndata_1$state)))
+
+df_churn <- data.frame(region=df_state_regions[match(churndata_2$state,df_state_regions$state),1],churndata_2)
+
+
+## trying neural networks
+df_churn_mat <- as.matrix(sapply(df_churn, as.numeric))
+
+df_churn_mat <- as.matrix(sapply(df_churn[c(-2,-4,-3)], as.numeric))
+
+
+n <- names(df_churn[c(-2,-3,-4)])
+f <- as.formula(paste("churn_value ~", paste( n[!n %in% c("churn_value","international_plan","voice_mail_plan")],collapse=" + ")))
+
+nn <- neuralnet(f,data = df_churn,hidden = c(5,3),linear.output = F)
+
+
+> names(churndata_2)
+
 ---------------------------------------------------------------------------------
 EOF
 ---------------------------------------------------------------------------------
+
+## Data preprocessing to generate Matrix format with numeric data for machine learning
+
+
+##fetch the region to state
+
+> mydb = dbConnect(MySQL(),user = 'root', password="zadmin1",dbname="db_churn",host='127.0.0.1')
+> region_state <- fetch(dbSendQuery(mydb,"select * from tab_state_abbv;"),n=-1)
+> dbClearResult(dbListResults(mydb)[[1]])
+[1] TRUE
+> dbDisconnect(mydb)
+[1] TRUE
+
+
+
+# convert character to numeric 
+# churn_value, international_plan, voice_mail_plan
+# Also add two columns int_plan vm_plan containing binary numeric values 0 for no and 1 for yes
+# In addition mutuate the region by matching with region_state data frame
+
+df_c <- churndata %>% mutate(churn_val = ifelse(churn_value == "False",0,1)) %>% mutate(int_plan = ifelse(international_plan=="no",0,1)) %>% mutate(vm_plan = ifelse(voice_mail_plan=="no",0,1)) %>% mutate(region=region_state[match(churndata$state,region_state$state),3])
+
+names(df_c)
+ [1] "state"                         "account_length"                "area_code"                    
+ [4] "phone_number"                  "international_plan"            "voice_mail_plan"              
+ [7] "number_vmail_messages"         "total_day_minutes"             "total_day_calls"              
+[10] "total_day_charge"              "total_eve_minutes"             "total_eve_calls"              
+[13] "total_eve_charge"              "total_night_minutes"           "total_night_calls"            
+[16] "total_night_charge"            "total_intl_minutes"            "total_intl_calls"             
+[19] "total_intl_charge"             "number_customer_service_calls" "churn_value"                  
+[22] "churn_val"                     "int_plan"                      "vm_plan"                      
+[25] "region"          
+
+# convert region and state to factor and then to numeric
+df_c$state <- as.factor(df_c$state)
+df_c$region <- as.factor(df_c$region)
+
+df_c[c(1,25)] <- sapply(df_c[c(1,25)],as.numeric)
+
+
+# rearrange the columns
+head(df_c[c(24,1,2,22,23,-3,-4)])
+
+names(df_c[c(25,1,23,24,2:22)])
+ [1] "region"                        "state"                         "int_plan"                     
+ [4] "vm_plan"                       "account_length"                "area_code"                    
+ [7] "phone_number"                  "international_plan"            "voice_mail_plan"              
+[10] "number_vmail_messages"         "total_day_minutes"             "total_day_calls"              
+[13] "total_day_charge"              "total_eve_minutes"             "total_eve_calls"              
+[16] "total_eve_charge"              "total_night_minutes"           "total_night_calls"            
+[19] "total_night_charge"            "total_intl_minutes"            "total_intl_calls"             
+[22] "total_intl_charge"             "number_customer_service_calls" "churn_value"                  
+[25] "churn_val"         
+
+
+## final subsetting and rearranging
+
+churn_df_c <- df_c[c(25,1,23,24,2:22)][c(-6,-7,-8,-9,-24)]
+
+names(df_c[c(25,1,23,24,2:22)][c(-6,-7,-8,-9,-24)])
+ [1] "region"                        "state"                         "int_plan"                     
+ [4] "vm_plan"                       "account_length"                "number_vmail_messages"        
+ [7] "total_day_minutes"             "total_day_calls"               "total_day_charge"             
+[10] "total_eve_minutes"             "total_eve_calls"               "total_eve_charge"             
+[13] "total_night_minutes"           "total_night_calls"             "total_night_charge"           
+[16] "total_intl_minutes"            "total_intl_calls"              "total_intl_charge"            
+[19] "number_customer_service_calls" "churn_val"    
+
+churn_df_c <- df_c[c(25,1,23,24,2:22)][c(-6,-7,-8,-9,-24)]
+
+summary(churn_df_c)
+     region          state       int_plan         vm_plan       account_length  number_vmail_messages
+ Min.   :1.000   Min.   : 1   Min.   :0.0000   Min.   :0.0000   Min.   :  1.0   Min.   : 0.000       
+ 1st Qu.:2.000   1st Qu.:14   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.: 73.0   1st Qu.: 0.000       
+ Median :3.000   Median :27   Median :0.0000   Median :0.0000   Median :100.0   Median : 0.000       
+ Mean   :2.603   Mean   :27   Mean   :0.0946   Mean   :0.2646   Mean   :100.3   Mean   : 7.755       
+ 3rd Qu.:3.000   3rd Qu.:40   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:127.0   3rd Qu.:17.000       
+ Max.   :4.000   Max.   :51   Max.   :1.0000   Max.   :1.0000   Max.   :243.0   Max.   :52.000       
+ total_day_minutes total_day_calls total_day_charge total_eve_minutes total_eve_calls total_eve_charge
+ Min.   :  0.0     Min.   :  0     Min.   : 0.00    Min.   :  0.0     Min.   :  0.0   Min.   : 0.00   
+ 1st Qu.:143.7     1st Qu.: 87     1st Qu.:24.43    1st Qu.:166.4     1st Qu.: 87.0   1st Qu.:14.14   
+ Median :180.1     Median :100     Median :30.62    Median :201.0     Median :100.0   Median :17.09   
+ Mean   :180.3     Mean   :100     Mean   :30.65    Mean   :200.6     Mean   :100.2   Mean   :17.05   
+ 3rd Qu.:216.2     3rd Qu.:113     3rd Qu.:36.75    3rd Qu.:234.1     3rd Qu.:114.0   3rd Qu.:19.90   
+ Max.   :351.5     Max.   :165     Max.   :59.76    Max.   :363.7     Max.   :170.0   Max.   :30.91   
+ total_night_minutes total_night_calls total_night_charge total_intl_minutes total_intl_calls
+ Min.   :  0.0       Min.   :  0.00    Min.   : 0.000     Min.   : 0.00      Min.   : 0.000  
+ 1st Qu.:166.9       1st Qu.: 87.00    1st Qu.: 7.510     1st Qu.: 8.50      1st Qu.: 3.000  
+ Median :200.4       Median :100.00    Median : 9.020     Median :10.30      Median : 4.000  
+ Mean   :200.4       Mean   : 99.92    Mean   : 9.018     Mean   :10.26      Mean   : 4.435  
+ 3rd Qu.:234.7       3rd Qu.:113.00    3rd Qu.:10.560     3rd Qu.:12.00      3rd Qu.: 6.000  
+ Max.   :395.0       Max.   :175.00    Max.   :17.770     Max.   :20.00      Max.   :20.000  
+ total_intl_charge number_customer_service_calls   churn_val     
+ Min.   :0.000     Min.   :0.00                  Min.   :0.0000  
+ 1st Qu.:2.300     1st Qu.:1.00                  1st Qu.:0.0000  
+ Median :2.780     Median :1.00                  Median :0.0000  
+ Mean   :2.771     Mean   :1.57                  Mean   :0.1414  
+ 3rd Qu.:3.240     3rd Qu.:2.00                  3rd Qu.:0.0000  
+ Max.   :5.400     Max.   :9.00                  Max.   :1.0000  
+
+
+
+# subset of churndata taking all as character continuous data
+mat1 <- as.matrix(churn_df_c)
+
+n <- names(churn_df_c)
+
+f <- as.formula(paste("churn_val ~", paste( n[!n %in% c("churn_val")],collapse=" + ")))
 
